@@ -10,9 +10,10 @@ create table VACANCY
 	Company nvarchar(50),
 	Position nvarchar(50),
 	Level nvarchar(15),
-    Exp int check(Exp >= 0 and Exp <= 116),
+    	Exp int check(Exp >= 0 and Exp <= 116),
 	MinSalary int,
 	MaxSalary int,
+	Status nchar(8) check(Status = 'Enable' or Status = 'Disable')
 )
 
 create table WORKER
