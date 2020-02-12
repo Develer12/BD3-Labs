@@ -45,6 +45,50 @@ namespace Lab2
 
         // ----------------------------------------------------------------------------
 
+        public void add_Candidate(string Fname, string Sname, string Position, string Level, string Sex, int Exp, int Salary, int Age, int Job)
+        {
+            string sql = "insert into CANDIDATE (FName, SName, Position, Level, Sex, Exp, Salary, Age, Job) values ('";
+            sql = sql + Fname + "','" + Sname + "','" + Position + "','" + Level + "','" + Sex + "','" + Exp + "','" + Salary + "','" + Age + "','" + Job + "')";
+            SqlCommand command = new SqlCommand(sql, conn);
+            command.ExecuteNonQuery();
+        }
 
+        public void drop_Candidate(int id)
+        {
+            string sql = "delete from CANDIDATE where Id=" + id;
+            SqlCommand command = new SqlCommand(sql, conn);
+            command.ExecuteNonQuery();
+        }
+
+        public void change_Candidate(int id,string Fname, string Sname, string Position, string Level, string Sex, int Exp, int Salary, int Age, int Job)
+        {
+            string sql = "update CANDIDATE set FName='" + Fname + "', SName='" + Sname + "', Position='" + Position + "', Level='" + Level + "', Exp='" + Exp + "', Sex='" + Sex + "', Salary='" + Salary + "',Job='" + Job + "', Age='" + Age + "' where Id='" + id + "'";
+            SqlCommand command = new SqlCommand(sql, conn);
+            command.ExecuteNonQuery();
+        }
+
+        // ----------------------------------------------------------------------------
+
+        public void add_Worker(string Fname, string Sname, string Position, string Level, string Sex, int Exp, int Salary, int Age, int Job)
+        {
+            string sql = "insert into WORKER (FName, SName, Position, Level, Sex, Exp, Salary, Age, Job) values ('";
+            sql = sql + Fname + "','" + Sname + "','" + Position + "','" + Level + "','" + Sex + "','" + Exp + "','" + Salary + "','" + Age + "','" + Job + "')";
+            SqlCommand command = new SqlCommand(sql, conn);
+            command.ExecuteNonQuery();
+        }
+
+        public void drop_Worker(int id)
+        {
+            string sql = "delete from WORKER where Id=" + id;
+            SqlCommand command = new SqlCommand(sql, conn);
+            command.ExecuteNonQuery();
+        }
+
+        public void change_Worker(int id, string Fname, string Sname, string Position, string Level, string Sex, int Exp, int Salary, int Age, int Job)
+        {
+            string sql = "update WORKER set FName='" + Fname + "', SName='" + Sname + "', Position='" + Position + "', Level='" + Level + "', Exp='" + Exp + "', Sex='" + Sex + "', Salary='" + Salary + "',Job='" + Job + "', Age='" + Age + "' where Id='" + id + "'";
+            SqlCommand command = new SqlCommand(sql, conn);
+            command.ExecuteNonQuery();
+        }
     }
 }
