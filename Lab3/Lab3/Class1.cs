@@ -1,11 +1,10 @@
 ﻿using System.Data.SqlClient;
 using System.Data.SqlTypes;
-using Microsoft.SqlServer.Server;
 
 public partial class StoredProcedures
 {
-    [SqlProcedure]
-    public static int GetCount(SqlDateTime min, SqlDateTime max)
+    [Microsoft.SqlServer.Server.SqlProcedure]
+    public static int GetCountbyAge(SqlInt32 min, SqlInt32 max)
     {
         int rows;
         SqlConnection conn = new SqlConnection("Context Connection=true");
