@@ -12,7 +12,7 @@ public partial class StoredProcedures
 
         SqlCommand sqlCmd = conn.CreateCommand();
 
-        sqlCmd.CommandText = @"select count(*) from CANDIDATE where Age between @min and @max";
+        sqlCmd.CommandText = @"select count(*) from CANDIDATE PIVOT(count(Id) for Sex in([F],[M])) pvt  where Age between @min and @max";
         sqlCmd.Parameters.AddWithValue("@min", min);
         sqlCmd.Parameters.AddWithValue("@max", max);
 
