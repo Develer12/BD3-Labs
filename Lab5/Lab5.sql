@@ -1,75 +1,87 @@
-go 
+go
 use WHiring;
--- T1
-go
-CREATE TABLE HUser
+
+CREATE TABLE Lab5(
+  hid hierarchyid NOT NULL,
+  userId int NOT NULL,
+  userName nvarchar(50) NOT NULL,
+CONSTRAINT PK_Lab5 PRIMARY KEY CLUSTERED 
 (
-	hid hierarchyid NOT NULL,
-	userId int NOT NULL,
-	userName nvarchar(50) NOT NULL,
-	CONSTRAINT PK_HID PRIMARY KEY CLUSTERED ([hid] ASC)
-);
+  [hid] ASC
+));
+
+
+
+insert into Lab5 values(hierarchyid::GetRoot(), 1, 'Us1'); 
+select * from Lab5;
 
 go
-insert into HUser(hid, userId,userName) values (hierarchyid::GetRoot(), 1, 'User1');
+declare @Id hierarchyid  
+select @Id = MAX(hid) from Lab5 where hid.GetAncestor(1) = hierarchyid::GetRoot() ; 
+insert into Lab5 values(hierarchyid::GetRoot().GetDescendant(@id, null), 2, 'Us2');
 
+go
+declare @Id hierarchyid
+select @Id = MAX(hid) from Lab5 where hid.GetAncestor(1) = hierarchyid::GetRoot() ;
+insert into Lab5 values(hierarchyid::GetRoot().GetDescendant(@id, null), 3, 'Us2');
+ 
+go
+declare @phId hierarchyid
+select @phId = (SELECT hid FROM Lab5 WHERE userId = 2);
+declare @Id hierarchyid
+select @Id = MAX(hid) from Lab5 where hid.GetAncestor(1) = @phId;
+insert into Lab5 values( @phId.GetDescendant(@id, null), 7, 'Us2');
 
-declare @id hierarchyid
-select @id = max(hid) from HUser
-where hid.GetAncestor(1) = hierarchyid::GetRoot()
+select hid.ToString(), hid.GetLevel(), * from Lab5; 
 
-select * from HUser;
-
--- T2
+--2------------------------------------------
 GO  
 CREATE PROCEDURE SelectRoot(@level int)    
 AS   
 BEGIN  
-   select hid.ToString(), * from HUser where hid.GetLevel() = @level;
+   select hid.ToString(), * from Lab5 where hid.GetLevel() = @level;
 END;
   
 GO  
 exec SelectRoot 1;
 
--- T3
+--3---------------------------------------------
 GO  
-CREATE PROCEDURE AddRoot(@UserId int,@UserName nvarchar(50))   
+CREATE PROCEDURE AddDocherRoot(@UserId int,@UserName nvarchar(50))   
 AS   
 BEGIN  
 declare @Id hierarchyid
 declare @phId hierarchyid
-select @phId = (SELECT hid FROM HUser WHERE UserId = @UserId);
+select @phId = (SELECT hid FROM Lab5 WHERE UserId = @UserId);
 
-select @Id = MAX(hid) from HUser where hid.GetAncestor(1) = @phId
+select @Id = MAX(hid) from Lab5 where hid.GetAncestor(1) = @phId
 
-insert into HUser values( @phId.GetDescendant(@id, null),@UserId,@UserName);
+insert into Lab5 values( @phId.GetDescendant(@id, null),@UserId,@UserName);
 END;  
 
 GO  
-exec AddRoot 1, 'User12';
-select * from HUser;
+exec AddDocherRoot 2, 'Us3';
+select * from Lab5; 
 
-
--- T4
 go
-CREATE PROCEDURE MoveRoot(@old int, @new int )
+CREATE PROCEDURE MovRoot(@old_uzel int, @new_uzel int )
 AS  
 BEGIN  
 DECLARE @nold hierarchyid, @nnew hierarchyid  
-SELECT @nold = hid FROM HUser WHERE UserId = @old ;  
+SELECT @nold = hid FROM Lab5 WHERE UserId = @old_uzel ;  
   
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE  
 BEGIN TRANSACTION  
-SELECT @nnew = hid FROM HUser WHERE UserId = @new ; 
+SELECT @nnew = hid FROM Lab5 WHERE UserId = @new_uzel ; 
   
 SELECT @nnew = @nnew.GetDescendant(max(hid), NULL)   
-FROM HUser WHERE hid.GetAncestor(1)=@nnew ; 
-UPDATE HUser   
+FROM Lab5 WHERE hid.GetAncestor(1)=@nnew ; 
+UPDATE Lab5   
 SET hid = hid.GetReparentedValue(@nold, @nnew)   
 WHERE hid.IsDescendantOf(@nold) = 1 ;   
  commit;
   END ;  
-  
-go
-exec MoveRoot 1,2
-select hid.ToString(), hid.GetLevel(), * from HUser;
+GO  
+----
+exec MovRoot 2,3
+select hid.ToString(), hid.GetLevel(), * from Lab5
