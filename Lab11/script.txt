@@ -1,0 +1,64 @@
+sqlite3
+
+DB.db
+
+create table VACANCY
+(
+    Id integer primary key AUTOINCREMENT,
+    Company text,
+    Position text,
+    Salary integer
+);
+
+create table WORKER
+(
+    Id integer primary key AUTOINCREMENT,
+    Name text,
+    Level integer,
+    Age integer,
+    Job integer,
+    FOREIGN KEY (Job) REFERENCES VACANCY(Id)
+);
+
+create table CANDIDATE
+(
+    Id integer primary key AUTOINCREMENT,
+    Name text,
+    Level integer,
+    Age integer,
+    Job integer,
+    FOREIGN KEY (Job) REFERENCES VACANCY(Id)
+);
+
+
+
+
+insert into VACANCY(Company, Position, Salary) values 
+    ('da', 'net', 228),
+    ('net', 'da', 22),
+    ('sss', 'aaa', 128),
+    ('rrr', 'qqq', 628);
+
+insert into CANDIDATE(Name, Level, Age, Job) values 
+    ('dada', 20, 57, 4),
+    ('netda', 21, 46, 3),
+    ('sssda', 22, 43, 2),
+    ('rrra', 21, 22, 1);
+
+insert into WORKER(Name, Level, Age, Job) values 
+    ('dada', 20, 57, 4),
+    ('netda', 21, 46, 3),
+    ('sssda', 22, 43, 2),
+    ('rrra', 21, 22, 1);
+
+
+create trigger if not exists trig
+after insert on CANDIDATE
+for each row
+begin
+    insert into WORKER(Name, Level, Age, Job) values 
+    	('trigger', 20, 57, 1);
+end;
+
+
+
